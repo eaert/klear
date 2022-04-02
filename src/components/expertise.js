@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { InputGroup, Form, Button } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import '../css/containers.css'
@@ -7,21 +7,24 @@ export default function Expertise() {
 
     const navigate = useNavigate()
 
-    const [checked, setChecked] = useState([])
+    const [checked, setChecked] = useState(sessionStorage.getItem('checked') ? JSON.parse(sessionStorage.getItem('checked')) : [])
+
+    const setCheckBox = (checkbox) => {
+        if (checked.includes(checkbox)) {
+            setChecked(checked.filter(item => item !== checkbox))
+        } else {
+            setChecked([...checked, checkbox])
+        }
+    }
 
     const switchPage = (page) => {
         sessionStorage.setItem('checked', JSON.stringify(checked))
         navigate(page)
     }
 
-    useEffect(() => {
-        var arr = sessionStorage.getItem('checked')
-        if (arr) {setChecked([...JSON.parse(arr)])}
-    }, [])
-
     return (
         <div>
-            <h1>Hi {}!</h1>
+            <h1>Hi {sessionStorage.getItem('name')}!</h1>
             <h2>What are your expertise?</h2>
             <InputGroup>
                 <Form>
@@ -32,7 +35,7 @@ export default function Expertise() {
                         name="group1"
                         type="checkbox"
                         id={`inline-checkbox-1`}
-                        onChange={(e) => setChecked([...checked, "Lifestyle"])}
+                        onChange={(e) => setCheckBox("Lifestyle")}
                     />
                     <Form.Check 
                         inline
@@ -41,7 +44,7 @@ export default function Expertise() {
                         name="group1"
                         type="checkbox"
                         id={`inline-checkbox-2`}
-                        onChange={(e) => setChecked([...checked, "Beauty"])}
+                        onChange={(e) => setCheckBox("Beauty")}
                     />
                     <Form.Check 
                         inline
@@ -50,7 +53,7 @@ export default function Expertise() {
                         name="group1"
                         type="checkbox"
                         id={`inline-checkbox-3`}
-                        onChange={(e) => setChecked([...checked, "Food"])}
+                        onChange={(e) => setCheckBox("Food")}
                     />
                 </Form>
             </InputGroup>
