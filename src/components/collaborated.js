@@ -1,29 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { InputGroup, FormControl, Button } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
 import '../css/containers.css'
+import PageSwitch from './pageSwitch';
 
 export default function Collaborated() {
 
-    const navigate = useNavigate()
-
-    const [brands, setBrands] = useState([])
+    const [brands, setBrands] = useState(sessionStorage.getItem('brands') ? JSON.parse(sessionStorage.getItem('brands')) : [])
 
     const [curBrand, setCurBrand] = useState()
 
-    const switchPage = (page) => {
+    const setNewBrand = () => {
+        if (!brands.includes('@'+curBrand)){ 
+            setBrands([...brands, '@'+curBrand])
+            setCurBrand('')
+        }
+    }
+
+    const saveState = () => {
         sessionStorage.setItem('brands', JSON.stringify(brands))
-        navigate(page)
     }
-
-    const finishAlert = () => {
-        alert('Finish!')
-    }
-
-    useEffect(() => {
-        var arr = sessionStorage.getItem('brands')
-        if (arr) {setBrands([...JSON.parse(arr)])}
-    }, [])
 
     return (
         <div>
@@ -31,20 +26,17 @@ export default function Collaborated() {
             <h2>have you collaborated with brands in the past?</h2>
             <InputGroup style={{width: '100%'}} onChange={e => setCurBrand(e.target.value)}>
                 <FormControl
+                    value={curBrand ? curBrand : ''}
                     placeholder="Enter Brand Name"
                     aria-label="brandName"
                     aria-describedby="basic-addon1"
                     />  
-                <Button id="basic-addon1" onClick={e => setBrands([...brands, curBrand])}><b>Add</b></Button>
+                <Button id="basic-addon1" onClick={e => setNewBrand()}><b>Add</b></Button>
             </InputGroup>
             <div>
                 { brands && brands.map((brand, index) => { return <p key={index}>{brand}</p>})}
             </div>
-            <div>
-                <Button className='inliners' onClick={() => switchPage('/exp')}>Back</Button>
-                <p className='inliners'>3/3</p>
-                <Button className='inliners' onClick={() => finishAlert}>Finish</Button>
-            </div>
+            <PageSwitch {...{index: 3, back: '/exp', next: 'finish', saveData: saveState}}/>
         </div>
     )
 }

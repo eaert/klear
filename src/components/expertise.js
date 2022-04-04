@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { InputGroup, Form, Button } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
+import { InputGroup, Form } from 'react-bootstrap';
 import '../css/containers.css'
+import PageSwitch from './pageSwitch';
+
+const checkboxes = ["Lifestyle", "Beauty", "Food"]
 
 export default function Expertise() {
-
-    const navigate = useNavigate()
 
     const [checked, setChecked] = useState(sessionStorage.getItem('checked') ? JSON.parse(sessionStorage.getItem('checked')) : [])
 
@@ -17,10 +17,11 @@ export default function Expertise() {
         }
     }
 
-    const switchPage = (page) => {
+    const saveState = () => {
         sessionStorage.setItem('checked', JSON.stringify(checked))
-        navigate(page)
     }
+
+
 
     return (
         <div>
@@ -28,40 +29,22 @@ export default function Expertise() {
             <h2>What are your expertise?</h2>
             <InputGroup>
                 <Form>
-                    <Form.Check 
-                        inline
-                        checked={checked.includes("Lifestyle")}
-                        label="Lifestyle"
-                        name="group1"
-                        type="checkbox"
-                        id={`inline-checkbox-1`}
-                        onChange={(e) => setCheckBox("Lifestyle")}
-                    />
-                    <Form.Check 
-                        inline
-                        checked={checked.includes("Beauty")}
-                        label="Beauty"
-                        name="group1"
-                        type="checkbox"
-                        id={`inline-checkbox-2`}
-                        onChange={(e) => setCheckBox("Beauty")}
-                    />
-                    <Form.Check 
-                        inline
-                        checked={checked.includes("Food")}
-                        label="Food"
-                        name="group1"
-                        type="checkbox"
-                        id={`inline-checkbox-3`}
-                        onChange={(e) => setCheckBox("Food")}
-                    />
+                    {checkboxes.map((checkbox, index) => {
+                        return (
+                        <Form.Check 
+                            inline
+                            key={index}
+                            checked={checked.includes(checkbox)}
+                            label={checkbox}
+                            name="group1"
+                            type="checkbox"
+                            id={`inline-checkbox-1`}
+                            onChange={(e) => setCheckBox(checkbox)}
+                        />)
+                    })}
                 </Form>
             </InputGroup>
-            <div>
-                <Button className='inliners' onClick={() => switchPage('/')}>Back</Button>
-                <p className='inliners'>2/3</p>
-                <Button className='inliners' onClick={() => switchPage('/col')}>Next</Button>
-            </div>
+            <PageSwitch {...{index: 2, back: '/', next: '/col', saveData: saveState}}/>
         </div>
     )
 }

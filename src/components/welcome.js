@@ -1,35 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { InputGroup, FormControl, Button } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
-import '../css/containers.css'
+import { InputGroup, FormControl } from 'react-bootstrap';
+import PageSwitch from './pageSwitch';
 
 export default function Welcome() {
 
-    const navigate = useNavigate()
-
     const [name, setName] = useState()
 
-    const setNewName = () => {
-        try {
-            sessionStorage.setItem('name', name)
-            switchPage()
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const switchPage = () => {
-        navigate('/exp')
+    const saveState = () => {
+        sessionStorage.setItem('name', name)
     }
 
     useEffect(() => {
-        setName(sessionStorage.getItem('name'))
+        setName(sessionStorage.getItem('name') ? sessionStorage.getItem('name') : '')
     }, [])
 
     return (
         <div>
             <h1>Welcome</h1>
-            <h2>How shold we call you?</h2>
+            <h2>How should we call you?</h2>
             <InputGroup style={{width: '100%'}} onChange={e => setName(e.target.value)}>
                 <FormControl
                     value={name}
@@ -38,10 +26,7 @@ export default function Welcome() {
                     aria-describedby="basic-addon1"
                     />  
             </InputGroup>
-            <div>
-                <p className='inliners'>1/3</p>
-                <Button className='inliners' onClick={setNewName}>Next</Button>
-            </div>
+            <PageSwitch {...{index: 1, next: 'exp', saveData: saveState}}/>
         </div>
     )
 }
